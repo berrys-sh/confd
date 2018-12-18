@@ -96,6 +96,10 @@ func (c *Client) GetValues(keys []string) (map[string]string, error) {
 			Quorum:    true,
 		})
 		if err != nil {
+			if client.IsKeyNotFound(err) {
+				log.Info("Key %s not existing etcd, Using default (if exist)", key)
+				continue
+			}
 			return vars, err
 		}
 		err = nodeWalk(resp.Node, vars)
